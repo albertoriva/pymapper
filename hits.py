@@ -58,3 +58,7 @@ class Hitset():
             h.initHit(d1)
             self.hits.append(h)
         return self.hits
+
+    def HitsetIterator(self):
+        for i in range(self.nhits):
+            yield self.hits[i]

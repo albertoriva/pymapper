@@ -13,8 +13,8 @@ toolName = "pymapper-1.0"
 def splitFirstLine(data):
     # Extracts the first line from `data' and returns a 
     # tuple: (firstline, rest)
-    eol = string.find(data, "\n")
-    return (data[0:eol], data[eol+1:])
+    part = data.partition("\n")
+    return (part[0], part[2])
 
 def sendMapperRequest(request):
     # Sends `request' to the MAPPER server.
