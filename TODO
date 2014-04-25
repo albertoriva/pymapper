@@ -1,0 +1,6 @@
+- command-line version (argument parsing, etc)
+
+- top-level functions should catch errors, and print out detailed
+  report (unless debug is True, in which case the errors should be
+  re-raised).
+
