@@ -1,7 +1,7 @@
 import argparse
 import string
 import httplib
-import hits
+import cStringIO
 
 ### Globals
 
@@ -10,13 +10,17 @@ VERSION="1.0"
 mapperHostname = "genome.ufl.edu"
 mapperUrl = "/mapper/db-rpc"
 toolName = "pymapper-$(VERSION)"
-nm=""
+
 ### Utils
 
 def splitFirstLine(data):
     """Extracts the first line from `data' and returns a tuple: (firstline, rest)."""
     part = data.partition("\n")
     return (part[0], part[2])
+
+def lineToList(line):
+    """Converts a tab-delimited line into a list of strings, removing the terminating \n and \r."""
+    return line.rstrip("\n\r").split("\t")
 
 def sendMapperRequest(request):
     """Sends `request' to the MAPPER server. Returns the body of the response as a string."""
@@ -51,6 +55,87 @@ class MapperNoModelsError(MapperError):
 
 class MapperInternalError(MapperError):
     pass
+
+### Class representing Mapper hits
+
+class Hit():
+    GeneID = ""
+    Gene = ""
+    Org = ""
+    Accession = ""
+    Model = ""
+    Factor = ""
+    Strand = ""
+    Chrom = ""
+    Start = 0
+    End = 0
+    Region = ""
+    Score = 0
+    Eval = 0
+    Conserved = False
+    Alignment_model = ""
+    Alignment_match = ""
+    Alignment_sequence = ""
+
+    def initHit(self, data):
+        # Fill slots of this hit using values from the list `data'
+        # (obtained by parsing a MAPPER csv)
+        self.GeneID = data[0]
+        self.Gene = data[1]
+        self.Org = data[2]
+        self.Accession = data[3]
+        self.Model = data[4]
+        self.Factor = data[5]
+        self.Strand = data[6]
+        self.Chrom = data[7]
+        self.Start = int(data[8])
+        self.End = int(data[9])
+        self.Region = data[10]
+        self.Score = float(data[11])
+        self.Eval = float(data[12])
+        self.Conserved = data[13]
+        self.Alignment = data[14]
+
+class Hitset():
+    hits = []
+    nhits = 0
+    header = []
+
+    def initHitsetFromCsv(self, n, data):
+        self.nhits = n
+        reader = cStringIO.StringIO(data)
+        header = lineToList(reader.readline()) # read and store header
+        for i in range(n):
+            h = Hit()
+            d1 = lineToList(reader.readline()) # read main line
+            d2 = lineToList(reader.readline()) # read line containing alignment match
+            d3 = lineToList(reader.readline()) # read line containing alignment sequence
+            reader.readline()                  # skip empty line
+            d1[14] = (d1[14], d2[14], d3[14])
+            h.initHit(d1)
+            self.hits.append(h)
+        return self.hits
+
+    def HitsetIterator(self):
+        """Returns an iterator to loop over the hits in this hitset."""
+        for i in range(self.nhits):
+            yield self.hits[i]
+
+    def HitsetFactors(self):
+        """Returns a list of all factors appearing in this hitset, without duplicates. 
+Useful to quickly check if a TFBS for a desired factor is present in the hitset."""
+        factors = {}
+        for h in self.hits:
+            factors[h.Factor] = True
+        return sorted(factors.keys())
+
+    def HitsetModels(self):
+        """Returns a list of all models appearing in this hitset, without duplicates. 
+Useful to quickly check if a TFBS from a desired model is present in the hitset."""
+        models = {}
+        for h in self.hits:
+            models[h.Model] = True
+        return sorted(models.keys())
 
 ### Client class
 
@@ -158,7 +243,7 @@ class MapperDbClient():
             self.Debug = debug
         (n, body) = self.parseMapperResponse(self.getMapperHits())
         if n:
-            hitset = hits.Hitset()
+            hitset = Hitset()
             hitset.initHitsetFromCsv(n, body)
             return hitset
 
