@@ -18,11 +18,26 @@ Results can be returned as a tab-delimited file, or as a Python object.
 >>> DB.hitsToFile()              # Run query
 ```
 
-A client object can be reused for multiple queries. Simply change the attributes
-you need and re-run the query:
+A client object can be reused for multiple queries. Simply assign new values to the 
+parameters you need to change and re-run the query:
 
 ```python
 >>> DB.models="T" # Use a different model library on the same genes
 >>> DB.filename="hits2.csv" # Don't overwrite previous results
 >>> DB.hitsToFile()
 ```
+
+## Query parameters
+
+The client object contains several attributes corresponding to query parameters that
+can be modified. They are:
+
+Parameter | Description
+----------|------------
+score     |  Lower threshold on the predicted TFBS score.
+perc      |  Lower threshold on the percentile of TFBS score (possible values: p50, p80, p90, p95, p99)
+evalue    |  Upper threshold on the predicted TFBS E-value
+pbases    |  Size of the region to be scanned, upstream of the transcript start or ATG of the gene (see pstart)
+pstart    |  Scan region upstream of the transcript start (T) or the ATG of the gene (C).
+org       |  Organism two-letter code (currently 'Hs', 'Mm', or 'Dm')
+sort      |  How to order the results. Possible values: M (by model number), N (by factor name), P (by position), S (by score, descending), s (by score, ascending), or E (by E-value).
