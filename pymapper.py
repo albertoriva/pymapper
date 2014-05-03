@@ -9,7 +9,7 @@ VERSION="1.0"
 
 mapperHostname = "genome.ufl.edu"
 mapperUrl = "/mapper/db-rpc"
-toolName = "pymapper-$(VERSION)"
+toolName = "pymapper-%(VERSION)"
 
 ### Utils
 
@@ -299,5 +299,4 @@ def main(DB):
 if __name__ == "__main__":
     DB = parseArgs()
     main(DB)
-    # DB.hitsToFile(DB.filename, DB.genes, DB.models)
 
