@@ -1,24 +1,25 @@
+import argparse
 import string
 import httplib
 import hits
 
 ### Globals
 
+VERSION="1.0"
+
 mapperHostname = "genome.ufl.edu"
 mapperUrl = "/mapper/db-rpc"
-toolName = "pymapper-1.0"
-
+toolName = "pymapper-$(VERSION)"
+nm=""
 ### Utils
 
 def splitFirstLine(data):
-    # Extracts the first line from `data' and returns a 
-    # tuple: (firstline, rest)
+    """Extracts the first line from `data' and returns a tuple: (firstline, rest)."""
     part = data.partition("\n")
     return (part[0], part[2])
 
 def sendMapperRequest(request):
-    # Sends `request' to the MAPPER server.
-    # Returns the body of the response as a string.
+    """Sends `request' to the MAPPER server. Returns the body of the response as a string."""
     conn = httplib.HTTPConnection(mapperHostname)
     conn.request("GET", request)
     response = conn.getresponse()
@@ -26,7 +27,7 @@ def sendMapperRequest(request):
     return response.read()
     
 def saveMapperResponse(data, filename):
-    # Save `data' returned by a mapper rpc-call to `filename'
+    """Save `data' returned by a mapper rpc-call to `filename'."""
     with open(filename, "w") as f:
         f.write(data)
 
@@ -54,16 +55,23 @@ class MapperInternalError(MapperError):
 ### Client class
 
 class MapperDbClient():
+    # Main arguments
+    genes    = None
+    models   = None
+    filename = None
+
     # Request optional parameters
-    score  = False
-    perc   = False
-    evalue = False
-    pbases = False
-    pstart = False
-    org    = False
-    sort   = False
+    score    = None
+    perc     = None
+    evalue   = None
+    pbases   = None
+    pstart   = None
+    org      = None
+    sort     = None
+
     # Internal
-    Debug  = False
+    mode     = None
+    Debug    = False
 
 ### Base methods
 
@@ -107,44 +115,104 @@ class MapperDbClient():
                 print("{} records returned.".format(n))
             return (n, body)
 
-    def getMapperList(self, prefix="*"):
-        request = mapperUrl + "?list=" + prefix
+    def getMapperList(self):
+        request = mapperUrl + "?list=" + self.models
         if self.Debug:
             print("Submitting request: " + request)
         return sendMapperRequest(request)
 
-    def getMapperHits(self, gene, models):
-        request = mapperUrl + "?gene=" + gene + "&models=" + models + self.makeParamsUrl()
+    def getMapperHits(self):
+        request = mapperUrl + "?gene=" + self.genes + "&models=" + self.models + self.makeParamsUrl()
         if self.Debug:
             print("Submitting request: " + request)
         return sendMapperRequest(request)
 
     # Top-level methods
 
-    def modelsToFile(self, filename, prefix="*", debug=False):
+    def modelsToFile(self, debug=False):
         if debug:
             self.Debug = debug
-        (n, body) = self.parseMapperResponse(self.getMapperList(prefix))
-        if self.Debug:
-            print("Saving models to file {}".format(filename))
-        saveMapperResponse(body, filename)
+        (n, body) = self.parseMapperResponse(self.getMapperList())
+        if self.filename:
+            if self.Debug:
+                print("Saving models to file {}".format(self.filename))
+            saveMapperResponse(body, self.filename)
+        else:
+            print(body)
         return n
 
-    def hitsToFile(self, filename, gene, models, debug=False):
+    def hitsToFile(self, debug=False):
         if debug:
             self.Debug = debug
-        (n, body) = self.parseMapperResponse(self.getMapperHits(gene, models))
-        if self.Debug:
-            print("Saving hits to file {}".format(filename))
-        saveMapperResponse(body, filename)
+        (n, body) = self.parseMapperResponse(self.getMapperHits())
+        if self.filename:
+            if self.Debug:
+                print("Saving hits to file {}".format(self.filename))
+            saveMapperResponse(body, self.filename)
+        else:
+            print(body)
         return n
 
-    def hitsToHitset(self, gene, models, debug=False):
+    def hitsToHitset(self, debug=False):
         if debug:
             self.Debug = debug
-        (n, body) = self.parseMapperResponse(self.getMapperHits(gene, models))
+        (n, body) = self.parseMapperResponse(self.getMapperHits())
         if n:
             hitset = hits.Hitset()
             hitset.initHitsetFromCsv(n, body)
             return hitset
+
+# Main
+
+def parseArgs():
+    DB = MapperDbClient()
+    parser = argparse.ArgumentParser(description='Query the MAPPER database.',
+                                     epilog='This tool can work in two modes, query or list. In query mode, it retrieves TFBSs from the Mapper database for the gene(s) specified by the -g argument. In this case the -m argument is optional and default to all models. In list mode, invoked when -m is specified but -g is not, the tool returns the list of known models. If an optional prefix is specified after -m, it returns data for the factors whose name starts with that prefix.')
+    parser.add_argument('-g', help='A comma-separated list of gene identifiers (HUGO gene names, Entrez GeneIDs, mRNA accession numbers or CG identifiers for Drosophila genes).',
+                        dest='genes', metavar='genes')
+    parser.add_argument('-m', help="A comma-separated list of MAPPER models. The special values `M', `T', and `J' indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.", 
+                        dest='models', metavar='models', nargs='?', const='*', default='Y')
+    parser.add_argument('-f', help='The name of the file that TFBS data will be written to.', 
+                        dest='filename', metavar='filename')
+    parser.add_argument('-s', help='Lower threshold on the predicted TFBS score.',
+                        dest='score', metavar='score', type=float)
+    parser.add_argument('-p', help='Lower threshold on the percentile of TFBS score.',
+                        dest='perc', metavar='perc', choices=['p50', 'p80', 'p85', 'p90', 'p95', 'p99'])
+    parser.add_argument('-e', help='Upper threshold on the predicted TFBS E-value', 
+                        dest='evalue', metavar='evalue', type=float)
+    parser.add_argument('-pb', help='Size of the region to be scanned, upstream of the transcript start or ATG of the gene (see the -ps argument).', 
+                        dest='pbases', metavar='size', type=int)
+    parser.add_argument('-ps', help='Scan region upstream of the transcript start (T) or the ATG of the gene (C).', 
+                        dest='pstart', metavar='start', choices=['T', 'C'])
+    parser.add_argument('-o', help='Organism two-letter code.', 
+                        dest='org', metavar='org', choices=['Hs', 'Mm', 'Dm'])
+    parser.add_argument('-r', help='How to order the results. Possible values: M (by model number), N (by factor name), P (by position), S (by score, descending), s (by score, ascending), or E (by E-value).', 
+                        dest='sort', metavar='sort', choices=['M', 'N', 'P', 'S', 's', 'E'])
+    parser.add_argument('-d', help='Enable debugging mode.', 
+                        action='store_true', dest='Debug')
+    parser.add_argument('-v', help='Display client version number.',
+                        action='version', version=VERSION)
+    args = parser.parse_args(namespace=DB)
+
+    # Determine mode
+    if DB.genes == None:
+        # Are we in list mode?
+        if DB.models == None:
+            parser.error("At least one of -g and -m are required. Use -h for full help.")
+        else:
+            DB.mode = 'list'
+    else:
+        DB.mode = 'query'
+    return DB
+
+def main(DB):
+    if DB.mode == 'query':
+        DB.hitsToFile(debug=DB.Debug)
+    elif DB.mode == 'list':
+        DB.modelsToFile(debug=DB.Debug)
+
+if __name__ == "__main__":
+    DB = parseArgs()
+    main(DB)
+    # DB.hitsToFile(DB.filename, DB.genes, DB.models)
 
