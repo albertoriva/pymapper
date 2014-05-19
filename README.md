@@ -11,19 +11,20 @@ Results can be returned as a tab-delimited file, or as a Python object.
 
 ```python
 >>> import pymapper
->>> DB=pymapper.MapperDbClient() # Create the client object
->>> DB.genes="APOE,TLR1"         # Genes to query
->>> DB.models="M,J"              # Model libraries to use
->>> DB.filename="hits.csv"       # Set destination file
->>> DB.hitsToFile()              # Run query
+>>> DB=pymapper.MapperDbClient()  # Create the client object
+>>> DB.genes = "APOE,TLR1"        # Genes to query
+>>> DB.models = "M,J"             # Model libraries to use
+>>> DB.filename = "hits.csv"      # Set destination file
+>>> DB.hitsToFile()               # Run query
+246                               # Number of hits written to 'hits.csv'
 ```
 
 A client object can be reused for multiple queries. Simply assign new values to the 
 parameters you need to change and re-run the query:
 
 ```python
->>> DB.models="T"           # Use a different model library on the same genes
->>> DB.filename="hits2.csv" # Don't overwrite previous results
+>>> DB.models = "T"           # Use a different model library on the same genes
+>>> DB.filename = "hits2.csv" # Don't overwrite previous results
 >>> DB.hitsToFile()
 ```
 
@@ -45,7 +46,7 @@ sort      |  How to order the results. Possible values: M (by model number), N (
 For example:
 
 ```python
->>> DB.score=5.0  # find hits with score >= 5
->>> DB.sort=P     # and sort them by position
->>> DB.hitsToFile()
+>>> DB.score = 5.0  # find hits with score >= 5
+>>> DB.sort = 'P'   # and sort them by position
+>>> DB.hitsToFile() # re-run query
 ```

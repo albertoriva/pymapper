@@ -9,7 +9,7 @@ VERSION="1.0"
 
 mapperHostname = "genome.ufl.edu"
 mapperUrl = "/mapper/db-rpc"
-toolName = "pymapper-%(VERSION)"
+toolName = "pymapper-{}".format(VERSION)
 
 ### Utils
 
@@ -252,7 +252,7 @@ class MapperDbClient():
 def parseArgs():
     DB = MapperDbClient()
     parser = argparse.ArgumentParser(description='Query the MAPPER database.',
-                                     epilog='This tool can work in two modes, query or list. In query mode, it retrieves TFBSs from the Mapper database for the gene(s) specified by the -g argument. In this case the -m argument is optional and default to all models. In list mode, invoked when -m is specified but -g is not, the tool returns the list of known models. If an optional prefix is specified after -m, it returns data for the factors whose name starts with that prefix.')
+                                     epilog='This tool can work in two modes, query or list. In query mode, it retrieves TFBSs from the Mapper database for the gene(s) specified by the -g argument. In this case the -m argument is optional and defaults to all models. In list mode, invoked when -m is specified but -g is not, the tool returns the list of known models. If an optional prefix is specified after -m, it returns data for the factors whose name starts with that prefix.')
     parser.add_argument('-g', help='A comma-separated list of gene identifiers (HUGO gene names, Entrez GeneIDs, mRNA accession numbers or CG identifiers for Drosophila genes).',
                         dest='genes', metavar='genes')
     parser.add_argument('-m', help="A comma-separated list of MAPPER models. The special values `M', `T', and `J' indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.", 
