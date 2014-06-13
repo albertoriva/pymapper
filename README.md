@@ -9,6 +9,9 @@ Results can be returned as a tab-delimited file, or as a Python object.
 
 ## Basic usage
 
+The following code shows how to create a MAPPER client object and to use it to
+send a query to MAPPER.
+
 ```python
 >>> import pymapper
 >>> DB=pymapper.MapperDbClient()  # Create the client object
@@ -17,6 +20,16 @@ Results can be returned as a tab-delimited file, or as a Python object.
 >>> DB.filename = "hits.csv"      # Set destination file
 >>> DB.hitsToFile()               # Run query
 246                               # Number of hits written to 'hits.csv'
+```
+
+Alternatively, you can use the prepare() method to initialze the client object:
+
+```python
+>>> import pymapper
+>>> DB=pymapper.MapperDbClient() # Create the client object
+>>> DB.prepare(genes="APOE,TLR1", models="M,J", filename="hits.csv") # Initialize it
+>>> DB.hitsToFile() # Run query
+246
 ```
 
 A client object can be reused for multiple queries. Simply assign new values to the 

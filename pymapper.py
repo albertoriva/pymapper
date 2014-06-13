@@ -158,6 +158,14 @@ class MapperDbClient():
     mode     = None
     Debug    = False
 
+    def prepare(self, genes=False, models=False, filename=False):
+        if genes:
+            self.genes = genes
+        if models:
+            self.models = models
+        if filename:
+            self.filename = filename
+
 ### Base methods
 
     def makeParamsUrl(self):
