@@ -26,9 +26,9 @@ Alternatively, you can use the prepare() method to initialze the client object:
 
 ```python
 >>> import pymapper
->>> DB=pymapper.MapperDbClient() # Create the client object
+>>> DB=pymapper.MapperDbClient()  # Create the client object
 >>> DB.prepare(genes="APOE,TLR1", models="M,J", filename="hits.csv") # Initialize it
->>> DB.hitsToFile() # Run query
+>>> DB.hitsToFile()               # Run query
 246
 ```
 
@@ -62,4 +62,42 @@ For example:
 >>> DB.score = 5.0  # find hits with score >= 5
 >>> DB.sort = 'P'   # and sort them by position
 >>> DB.hitsToFile() # re-run query
+```
+
+## Generating hitsets
+
+The results of a MAPPER query can be returned as a Python object of classs Hitset.
+This is accomplished using the function hitsToHitset():
+
+```python
+>>> DB.prepare(genes='APOE,TLR1', models='J')
+>>> hits = DB.hitsToHitset()  # Generate hitset
+>>> hits.nits
+7                             # Number of hits in hitset
+```
+
+The contents of a hitset can be iterated over. For example, to print
+all the scores of the hits in this hitset:
+
+```python
+>>> for h in hits.hits:
+...  print h.Score
+...
+3.8
+5.7
+3.8
+5.6
+5.8
+5.4
+3.8
+```
+
+The two methods HitsetFactors() and HitsetModels() return a list of all the
+factors and all the models appearing in a hitset, respectively:
+
+```python
+>>> hits.HitsetFactors()
+['Dr', 'hkb', 'opa', 'run::Bgb', 'tll']
+>>> hits.HitsetModels()
+['MA0188', 'MA0242', 'MA0450', 'MA0456', 'MA0459']
 ```

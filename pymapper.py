@@ -27,8 +27,9 @@ def sendMapperRequest(request):
     conn = httplib.HTTPConnection(mapperHostname)
     conn.request("GET", request)
     response = conn.getresponse()
+    resp = response.read()
     conn.close()
-    return response.read()
+    return resp
     
 def saveMapperResponse(data, filename):
     """Save `data' returned by a mapper rpc-call to `filename'."""
