@@ -92,6 +92,25 @@ all the scores of the hits in this hitset:
 3.8
 ```
 
+The hits attribute of a hitset is a list of Hit objects. A hit has the following attributes:
+
+Attribute | Description
+----------|------------
+GeneID    | NCBI ID of this gene
+Gene      | Gene symbol
+Org       | Organism
+Accession | mRNA accession number
+Model     | Model identifier
+Factor    | Transcription factor name
+Strand    | Strand of hit
+Chrom     | Chromosome
+Start     | Start position of hit on chromosome
+End       | End position of hit on chromosome
+Region    | Gene region (e.g., 'Promoter')
+Score     | Score of hit
+Eval      | E-value of hit
+Alignment | A 3-tuple containing the alignment details
+
 The two methods HitsetFactors() and HitsetModels() return a list of all the
 factors and all the models appearing in a hitset, respectively:
 
@@ -100,4 +119,18 @@ factors and all the models appearing in a hitset, respectively:
 ['Dr', 'hkb', 'opa', 'run::Bgb', 'tll']
 >>> hits.HitsetModels()
 ['MA0188', 'MA0242', 'MA0450', 'MA0456', 'MA0459']
+```
+
+## Model list
+A list of all models known to MAPPER can be obtained with the modelsToFile() method.
+The models to be returned can be selected using the <i>models</i> attribute (use models='*'
+to select all models). If <i>filename</i> is specified the models will be written
+to a file, otherwise they will be printed to standard output.
+
+```python
+>>> DB.prepare(models='*', filename='models.csv')
+>>> DB.modelsToFile()
+6322 records returned.
+Saving models to file models.csv
+6322
 ```
