@@ -155,9 +155,9 @@ The following table lists available command-line options with their meaning.
 
 Option | Description
 -------|------------
-  -h, --help   | show this help message and exit
+  -h,&nbsp;--help   | show this help message and exit
   -g genes     | A comma-separated list of gene identifiers (HUGO gene names, Entrez GeneIDs, mRNA accession numbers or CG identifiers for Drosophila genes).
-  -m [models]  | A comma-separated list of MAPPER models. The special values `M', `T', and `J' indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.
+  -m [models]  | A comma-separated list of MAPPER models. The special values `M`, `T`, and `J` indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.
   -f filename  | The name of the file that TFBS data will be written to.
   -s score     | Lower threshold on the predicted TFBS score.
   -p perc      | Lower threshold on the percentile of TFBS score.
