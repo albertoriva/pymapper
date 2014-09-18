@@ -153,22 +153,26 @@ the factors whose name starts with that prefix.
 
 The following table lists available command-line options with their meaning.
 
-Option | Description
--------|------------
-  `-h, --help`   | show this help message and exit
-  -g genes     | A comma-separated list of gene identifiers (HUGO gene names, Entrez GeneIDs, mRNA accession numbers or CG identifiers for Drosophila genes).
-  -m [models]  | A comma-separated list of MAPPER models. The special values `M`, `T`, and `J` indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.
-  -f filename  | The name of the file that TFBS data will be written to.
-  -s score     | Lower threshold on the predicted TFBS score.
-  -p perc      | Lower threshold on the percentile of TFBS score.
-  -e evalue    | Upper threshold on the predicted TFBS E-value
-  -pb size     | Size of the region to be scanned, upstream of the transcript start or ATG of the gene (see the -ps argument).
-  -ps start    | Scan region upstream of the transcript start (`T`) or the ATG of the gene (`C`).
-  -o org       | Organism two-letter code.
-  -r sort      | How to order the results. Possible values: `M` (by model number), `N` (by factor name), `P` (by position), `S` (by score, descending), `s` (by score, ascending), or `E` (by E-value).
-  -d           | Enable debugging mode.
-  -v           | Display client version number.
-
+<table>
+  <thead>
+    <tr><th>Option</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td nowrap>-h, --help</td><td>Show this help message and exit</td></tr>
+    <tr><td nowrap>-g genes</td><td>A comma-separated list of gene identifiers (HUGO gene names, Entrez GeneIDs, mRNA accession numbers or CG identifiers for Drosophila genes).</td></tr>
+    <tr><td nowrap>-m [models]</td><td>A comma-separated list of MAPPER models. The special values `M`, `T`, and `J` indicate the MAPPER, TRANSFAC, and JASPAR model libraries respectively.</td></tr>
+    <tr><td nowrap>-f filename</td><td>The name of the file that TFBS data will be written to.</td></tr>
+    <tr><td nowrap>-s score</td><td>Lower threshold on the predicted TFBS score.</td></tr>
+    <tr><td nowrap>-p perc</td><td>Lower threshold on the percentile of TFBS score.</td></tr>
+    <tr><td nowrap>-e evalue</td><td>Upper threshold on the predicted TFBS E-value</td></tr>
+    <tr><td nowrap>-pb size</td><td>Size of the region to be scanned, upstream of the transcript start or ATG of the gene (see the -ps argument).</td></tr>
+    <tr><td nowrap>-ps start</td><td>Scan region upstream of the transcript start (`T`) or the ATG of the gene (`C`).</td></tr>
+    <tr><td nowrap>-o org</td><td>Organism two-letter code.</td></tr>
+    <tr><td nowrap>-r sort</td><td>How to order the results. Possible values: `M` (by model number), `N` (by factor name), `P` (by position), `S` (by score, descending), `s` (by score, ascending), or `E` (by E-value).</td></tr>
+    <tr><td nowrap>-d</td><td>Enable debugging mode.</td></tr>
+    <tr><td nowrap>-v</td><td>Display client version number.</td></tr>
+  </tbody>
+</table>
 
 ## Credits
 **csvtoxls.py** is (c) 2014, A. Riva, <A href='http://dibig.biotech.ufl.edu'>DiBiG</A>, <A href='http://biotech.ufl.edu/'>ICBR Bioinformatics</A>, University of Florida
