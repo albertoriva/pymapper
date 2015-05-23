@@ -175,4 +175,4 @@ The following table lists available command-line options with their meaning.
 </table>
 
 ## Credits
-**csvtoxls.py** is (c) 2014, A. Riva, <A href='http://dibig.biotech.ufl.edu'>DiBiG</A>, <A href='http://biotech.ufl.edu/'>ICBR Bioinformatics</A>, University of Florida
+**pymapper** is (c) 2014, A. Riva, <A href='http://dibig.biotech.ufl.edu'>DiBiG</A>, <A href='http://biotech.ufl.edu/'>ICBR Bioinformatics</A>, University of Florida
